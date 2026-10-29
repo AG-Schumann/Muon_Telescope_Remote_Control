@@ -1,0 +1,10 @@
+2× SN74LVC1G14DBVR        (SOT-23-5)
+4× BAT85                   (DO-35)
+6× 2N7000                  (TO-92)
+1× P6KE6.8A                (DO-15)
+2× 49.9R %1                (metal film)
+2× 33R
+~10× 1K, ~6× 10K, 1× 330R, 3× 470R
+~10× 100nF seramik disk
+Header'lar: 1x03, 1x04, 1x05, 2x20 (GPIO)
+2× screw terminal 5mm

@@ -1,0 +1,10 @@
+# Requirements for the software project
+
+gpiozero
+pigpio
+BMI160_i2c
+adafruit-blinka
+adafruit-circuitpython-dht
+
+python-dotenv
+textual

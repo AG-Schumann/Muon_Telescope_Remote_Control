@@ -1,0 +1,19 @@
+/* muon_control.tui — Dashboard stil tanimlari */
+
+RunStatusPanel {
+    width: 1fr;
+    padding: 1 2;
+    border: round $primary;
+}
+
+HardwareStatusPanel {
+    width: 1fr;
+    padding: 1 2;
+    border: round $secondary;
+}
+
+#event_log {
+    height: 10;
+    border: round $panel;
+    padding: 0 1;
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Muon Teleskop — System Monitor</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <style>
+    :root { 
+      --bg:#0f1420; --card:#1a2130; --line:#2a3446; --fg:#e6ecf5;
+      --dim:#8a97ab; --accent:#4fc3f7; --ok:#5ec26a; --warn:#e0a33e; --idle:#7a8494; 
+    }
+
+    :root.light-mode { 
+      --bg: #f5f7fa; --card: #ffffff; --line: #e2e8f0; --fg: #1e293b;
+      --dim: #64748b; --accent: #0284c7; --ok: #16a34a; --warn: #d97706; --idle: #64748b; 
+    }
+
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--fg); transition: background 0.3s, color 0.3s;
+           font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    header { padding:16px 22px; border-bottom:1px solid var(--line);
+             display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; }
+    h1 { font-size:16px; margin:0; letter-spacing:.5px; font-weight:600; }
+    .sub { color:var(--dim); font-size:12px; }
+    
+    /* Tema Değiştirme Buton Stili */
+    #theme-toggle {
+      background: var(--card); border: 1px solid var(--line); color: var(--fg);
+      padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: inherit;
+    }
+    #theme-toggle:hover { background: var(--line); }
+
+    #badge { margin-left:auto; padding:4px 12px; border-radius:20px; font-size:12px;
+             border:1px solid var(--line); }
+    .wrap { padding:22px; display:grid; gap:16px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:10px;
+            padding:16px 18px; }
+    .card h2 { font-size:11px; text-transform:uppercase; letter-spacing:1px;
+               color:var(--dim); margin:0 0 10px; font-weight:600; }
+    .big { font-size:30px; font-weight:600; }
+    .unit { font-size:14px; color:var(--dim); margin-left:4px; }
+    .meta { font-size:11px; color:var(--dim); margin-top:8px; word-break:break-all; }
+    .full { grid-column: 1 / -1; }
+    canvas { max-height:260px; }
+    table { width:100%; border-collapse:collapse; font-size:12px; }
+    th, td { text-align:right; padding:5px 8px; border-bottom:1px solid var(--line); }
+    th { color:var(--dim); font-weight:500; }
+    td:first-child, th:first-child { text-align: left; }
+  </style>
+
+
+</head>
+<body>
+  <header>
+    <h1>MUON TELESCOPE</h1>
+    <span class="sub">system monitor</span>
+    <span id="badge">connecting…</span>
+    <button id="theme-toggle">☀️ Light Mode</button> 
+  </header>
+
+  <div class="wrap">
+    <div class="card">
+      <h2>Temperature</h2>
+      <div><span id="temp" class="big">–</span><span class="unit">°C</span></div>
+      <div class="meta" id="temp-meta">–</div>
+    </div>
+    <div class="card">
+      <h2>Humidity</h2>
+      <div><span id="hum" class="big">–</span><span class="unit">%RH</span></div>
+      <div class="meta" id="hum-meta">–</div>
+    </div>
+    <div class="card">
+      <h2>DAQ Count</h2>
+      <div><span id="count" class="big">–</span></div>
+      <div class="meta" id="count-meta">–</div>
+    </div>
+    <div class="card">
+      <h2>Recent Activity</h2>
+      <div><span id="activity" class="big">–</span><span class="unit">s ago</span></div>
+      <div class="meta" id="now-meta">–</div>
+    </div>
+
+    <div class="card full">
+      <h2>Temperature / Humidity (recent readings)</h2>
+      <canvas id="tempChart"></canvas>
+    </div>
+
+    <div class="card full">
+      <h2>Recent Scan: acquisition rate</h2>
+      <canvas id="scanChart"></canvas>
+      <div style="margin-top:14px; overflow-x:auto;">
+        <table id="scanTable"><thead></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

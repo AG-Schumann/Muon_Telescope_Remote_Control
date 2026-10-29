@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "muon-telescope-remote-control"
+version = "0.1.0"
+description = "Muon Telescope Remote Control software"
+readme = "README.md"
+requires-python = ">=3.11"          
+dependencies = [
+    "gpiozero",
+    "pyserial",                      # CAEN N1470 HV supply (USB serial)
+    "smbus2",                        # EA DOGS164 front panel display (I2C)
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+muon-daemon = "muon_daemon.server:main"
+muon_telescope_manager = "muon_tui.app:main"

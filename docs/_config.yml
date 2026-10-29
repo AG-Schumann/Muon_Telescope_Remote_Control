@@ -1,0 +1,24 @@
+# GitHub Pages builds this with its built-in Jekyll: no local toolchain,
+# no Actions. Settings -> Pages -> Deploy from branch -> main, /docs.
+title: Muon Telescope Remote Control
+description: A Raspberry Pi controlled, rotatable cosmic-ray muon telescope — hardware, daemon, TUI and data formats.
+url: https://AG-Schumann.github.io
+baseurl: /Muon_Telescope_Remote_Control
+
+remote_theme: just-the-docs/just-the-docs
+plugins:
+  - jekyll-remote-theme
+
+search_enabled: true
+heading_anchors: true
+color_scheme: light
+
+aux_links:
+  GitHub repository: https://github.com/AG-Schumann/Muon_Telescope_Remote_Control
+aux_links_new_tab: true
+
+footer_content: "Muon Telescope Remote Control &mdash; documentation lives in <code>docs/</code> of the repository."
+
+# Do not publish helper folders as pages.
+exclude:
+  - assets/img/*.ods

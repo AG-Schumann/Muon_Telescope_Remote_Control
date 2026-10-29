@@ -1,0 +1,13 @@
+Bilgi: X ölçeğiyle sınırlandırılmıştır.
+Bilgi: Y ölçeği kısıtlandı.
+'/home/mucahit/GeMSE/Muon_Telescope_Remote_Control/hardware/Schematics/Electronics/Board_Desing_V4/Outputs/Board_Desing_V4-F_Cu.gtl' olarak çizildi.
+'/home/mucahit/GeMSE/Muon_Telescope_Remote_Control/hardware/Schematics/Electronics/Board_Desing_V4/Outputs/Board_Desing_V4-B_Cu.gbl' olarak çizildi.
+'/home/mucahit/GeMSE/Muon_Telescope_Remote_Control/hardware/Schematics/Electronics/Board_Desing_V4/Outputs/Board_Desing_V4-F_Paste.gtp' olarak çizildi.
+'/home/mucahit/GeMSE/Muon_Telescope_Remote_Control/hardware/Schematics/Electronics/Board_Desing_V4/Outputs/Board_Desing_V4-B_Paste.gbp' olarak çizildi.
+'/home/mucahit/GeMSE/Muon_Telescope_Remote_Control/hardware/Schematics/Electronics/Board_Desing_V4/Outputs/Board_Desing_V4-F_Silkscreen.gto' olarak çizildi.
+'/home/mucahit/GeMSE/Muon_Telescope_Remote_Control/hardware/Schematics/Electronics/Board_Desing_V4/Outputs/Board_Desing_V4-B_Silkscreen.gbo' olarak çizildi.
+'/home/mucahit/GeMSE/Muon_Telescope_Remote_Control/hardware/Schematics/Electronics/Board_Desing_V4/Outputs/Board_Desing_V4-F_Mask.gts' olarak çizildi.
+'/home/mucahit/GeMSE/Muon_Telescope_Remote_Control/hardware/Schematics/Electronics/Board_Desing_V4/Outputs/Board_Desing_V4-B_Mask.gbs' olarak çizildi.
+'/home/mucahit/GeMSE/Muon_Telescope_Remote_Control/hardware/Schematics/Electronics/Board_Desing_V4/Outputs/Board_Desing_V4-Edge_Cuts.gm1' olarak çizildi.
+'/home/mucahit/GeMSE/Muon_Telescope_Remote_Control/hardware/Schematics/Electronics/Board_Desing_V4/Outputs/Board_Desing_V4-job.gbrjob' Gerber iş dosyası oluşturuldu.
+Bilgi: Tamamlandı.

@@ -1,0 +1,32 @@
+# muon-daemon.service
+#
+# systemd service that runs the muon telescope control daemon.
+# Install to: /etc/systemd/system/muon-daemon.service
+#
+
+[Unit]
+Description=Muon Telescope Control Daemon
+
+After=network.target
+
+[Service]
+User=muon_telescope
+Group=muon_telescope
+
+WorkingDirectory=/home/muon_telescope/muon/software
+
+ExecStart=/home/muon_telescope/muon_venv/bin/muon-daemon --config config/default.toml --data-dir /home/muon_telescope/muon_data
+
+# If the daemon crashes, restart it automatically...
+Restart=on-failure
+# ...but wait 5 seconds between restarts, so a persistent hardware fault
+# doesn't cause a tight restart loop hammering the system.
+RestartSec=5
+
+#If SIGTERM could not stop service in 15 seconds, send SIGKILL
+TimeoutStopSec=15
+
+[Install]
+# Makes `systemctl enable` hook this service into normal multi-user boot,
+# so it starts automatically when the Pi powers on.
+WantedBy=multi-user.target

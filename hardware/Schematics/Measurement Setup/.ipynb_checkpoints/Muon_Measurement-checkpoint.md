@@ -1,0 +1,77 @@
+# Muon Measurement Setup
+
+## Overview
+
+The updated muon telescope (Muon Telescope V2) is based on the first version of the instrument. The key upgrade is the transition from a two-panel to a four-panel configuration, which enables track reconstruction, improved coincidence conditions, and the possibility of operating as two independent sub-telescopes.
+
+| muon_telescope_v1.png | muon_telescope_v2.png |
+
+## Detector Configuration
+
+The telescope consists of four plastic scintillation panels, stacked vertically from top to bottom:
+
+- Panel 0 (topmost)
+- Panel 1
+- Panel 2
+- Panel 3 (bottommost)
+![setup_panel_layout](setup_images/panel_layout_v2.png)
+
+### Panel Specifications
+
+- Active area: 282 mm × 282 mm = 0.0795 m² per panel
+- Scintillator thickness: 10 mm
+- Material: EJ-200 plastic scintillator (Eljen Technology)
+- Readout: Hamamatsu PMT
+- Manufacturer: Scionix Holland
+
+| Specification | Panel 0 | Panel 1 | Panel 2 | Panel 3 |
+|---|---|---|---|---|
+| Brand | Scionix Holland | Scionix Holland | Scionix Holland | Scionix Holland |
+| Model | R280x10B280/2M-EI-P-X-NEG | R280x10B280/2M-EI-P-X-NEG | R280x10B280/2M-EI-P-X-NEG | R280x10B280/2M-EI-P-X-NEG |
+| Scintillator | EJ-200 | EJ-200 | EJ-200 | EJ-200 |
+| Serial No. | S2AA6047 | S2AA6049 | S2AA6050 | S2AA6048 |
+| Type | Neg-Scintillator-Det | Neg-Scintillator-Det | Neg-Scintillator-Det | Neg-Scintillator-Det |
+
+| image_pmt0.png | image_pmt1.png | image_pmt2.png | image_pmt3.png |
+
+### Panel Voltage Settings
+
+Each panel has a suggested maximum operating voltage provided by the manufacturer. The working voltages were set conservatively below the maximum limit to ensure stable long-term operation and to avoid damage to the PMTs.
+
+| Setting | Panel 0 | Panel 1 | Panel 2 | Panel 3 |
+|---|---|---|---|---|
+| Suggested Max Voltage | 1560 V | 1800 V | 1340 V | 1550 V |
+| Set Max Voltage Limit | 1460 V | 1700 V | 1240 V | 1450 V |
+| Working Voltage (V_set) | 1400 V | 1600 V | 1150 V | 1350 V |
+
+## Data Acquisition (DAQ)
+
+The signals from each panel are processed through a discriminator module, which converts the analog PMT pulses into digital logic signals for coincidence analysis.
+
+- Discriminator: LeCroy Model 623B
+
+![setup_daq](setup_images/daq.jpg)
+
+
+### Measurement Plan
+
+The DAQ chain operates as follows: PMT signals from each panel are fed into the discriminator, where a threshold is applied to reject noise. The discriminated outputs are then combined in a coincidence logic unit to identify events where multiple panels fire within a defined time window.
+![setup_diagram](setup_images/Setup_Diagram.drawio.png)
+
+
+**Panel Layout**
+
+|![setup_diagram](setup_images/panel_orient_all_active.png)
+|![setup_diagram](setup_images/panel_orient_p03.png)|
+
+First test results: 100 seconds for testing
+| Counts / Angle | θ = 0° | θ = −2.5° | θ = +2.5° | θ = 20° | θ = 45° |
+|---|---|---|---|---|---|
+| P0 | 1188 | 1212 | 1142 | 1179 | — |
+| P1 | 1430 | 1427 | 1377 | 1402 | — |
+| P2 | 1066 | 1176 | 1066 | 1095 | — |
+| P3 | 1180 | 1280 | 1208 | 1344 | — |
+| P_all | 28 | 20 | 22 | 43 | — |
+| P03 | 49 | 35 | 34 | 28 | — |
+
+![setup_diagram](image.png)

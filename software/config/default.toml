@@ -1,0 +1,196 @@
+    # =============================================================================
+    #  Muon Telescope Control Board — default configuration (single source of truth)
+    #  This file is version-controlled in git. Put machine-specific values in local.toml.
+    #  Derived quantities (steps_per_deg, M0/M1/M2) are NOT written here; the code computes them.
+    # ---------------------------Version history-------------------------------------------------
+    # 1.0 — Initial version, based on Muon_Telescope_2026-06-30
+    # 1.1 — Updated for the mu-TC v1 board (2026-07-30) and TB6600 stepper driver (2026-08-01)
+    # =============================================================================
+
+
+    [meta]
+    config_version = "1.1"
+    board_rev      = "v1"
+    #m0        = 5     # M0_GPIO05 -> No longer needed for TB6600 motor driver, but kept for reference 
+    #m1        = 6     # M1_GPIO06 -> No longer needed for TB6600 motor driver, but kept for reference
+    #m2        = 13    # M2_GPIO13 -> No longer needed for TB6600 motor driver, but kept for reference
+
+    # --- BCM pin assignments (with schematic names) ----------------------------------
+    [gpio]
+    # DAQ channels, in channel order. The board conditions two coaxial
+    # inputs: CH_0 (J1) -> SIG_0_GPIO23 and CH_1 (J16) -> SIG_1_GPIO18.
+    # GPIO23 is the pin that was already wired and counting on its own,
+    # so it stays ch0 -- an existing single-channel run keeps its meaning.
+    # List only the ones actually connected: each gets its own counter
+    # and its own event file.
+    daq_signals = [23, 18]
+    step       = 12    # STEP_GPIO12
+    dir        = 20    # DIR_GPIO20
+    enable     = 16    # EN_GPIO16
+    relay      = 8     # RELAY_GPIO8
+    motor_pwr_sense = 5  # motor toggle + end-switch chain state
+    hall_limit_zero = 26    # SW_0_GPIO26
+    hall_limit_max  = 25    # SW_MAX_GPIO25
+    temp       = 19    # TEMP_GPIO19
+    btn_start  = 17    # BTN_START_GPIO17 
+    btn_stop   = 27    # BTN_STOP_GPIO27
+    btn_reset  = 22    # BTN_RESET_GPIO22
+    btn_shutdown = 21  # BTN_SHUTDOWN_GPIO21
+    led_active  = 4    # LED_ACTIVE_GPIO4 — J12 on panel: daemon is running
+    led_meas   = 24    # LED_MEAS_GPIO24  — J12 on panel: measurement is acquiring
+    # Ekran reseti (aktif LOW). GPIO8 role, GPIO17 start butonu, ikisi de
+    # olmaz; GPIO7 (SPI CE1, kartta bos) secildi. 0 yazarsan pin
+    # kullanilmaz ve RST'yi 10k ile 3.3V'a baglarsin; reset = init
+    # dizisini tekrar gondermek.
+    display_rst = 7    # DISPLAY_RST_GPIO7, Pi header pin 26
+
+    [stepper]
+    steps_per_rev = 200      # NEMA 17, 1.8 degree/step
+    microstep     = 8        # TB6600, 1/8 microstepping -> user has to set DIP switches on the driver board accordingly
+    gear_ratio    = 100.0     # planetary gearbox ratio (100:1)
+    max_rate_hz   = 100.0     # conservative slew speed (steps/s)
+    # Which DIR level means "increasing angle" is a wiring fact the code
+    # cannot infer. Measured on this build: DIR HIGH drives the telescope
+    # towards the NEGATIVE end, so the level has to be flipped.
+    # If a move goes the wrong way, flip this flag -- the IMU calibration
+    # cannot fix it, because it only fits an offset, never a sign.
+    invert_direction = true
+    # Anti-backlash approach. A gearbox has a dead zone: reverse the motor
+    # and it turns a little before the telescope moves at all. Which side
+    # of that dead zone the teeth rest on depends on which way you last
+    # moved, so the same commanded angle can leave the telescope in two
+    # slightly different places.
+    # The cure is to always arrive from the same side. A move that would
+    # arrive from the wrong side first goes this far PAST the target,
+    # then comes back. Set it larger than the measured backlash (use
+    # "Measure backlash" on the calibration screen); 0 disables it.
+    approach_margin_deg = 1.0
+
+    # Which side to arrive from -- and this is decided by gravity, not
+    # by taste. The telescope is bottom-heavy: the half below the axis
+    # weighs more than the half above it, so gravity always pulls it
+    # toward smaller angles, and it pulls hardest near 90 deg.
+    #
+    # A move ends with disable(), which releases the coils AND cuts 12V,
+    # so nothing holds the load afterwards except the gearbox. Arrive
+    # from below and the teeth are loaded against gravity; the moment
+    # the power goes, the load sags back across the whole dead zone.
+    # Arrive from "above" and the teeth are already resting on the flank
+    # gravity holds them against, so releasing changes nothing.
+    #
+    # In other words the unbalance is not a nuisance to be fought, it is
+    # a free anti-backlash preload -- provided we approach with it
+    # instead of against it.
+    #
+    # Set to "below" to get the old behaviour back.
+    approach_from = "above"
+
+   [safety]
+    limit_zero_deg = 0.0       # hall sensor switch (positioninig reference)
+    limit_max_deg  = 90.0     # hall sensor switch (positioning reference)
+    soft_limit_min_deg = -50.0    # hardware switch -55, 5 derece margin
+    soft_limit_max_deg = 110.0    # hardware switch 115, 5 derece margin
+
+    # On panel ledlerinin polaritesi. true = GPIO HIGH olunca yanar.
+    # Ikisi de tezgahta dogrulandi: J12'de hem +3.3V hem GND bulunmasina
+    # ragmen her iki led de GPIO'dan surulup GND'ye gidiyor, yani ikisi
+    # de active-high. (Sema ilk bakista LED_ACTIVE'i 3.3V ile GPIO4
+    # arasinda gosteriyor gibi duruyor; gercek baglanti oyle degil.)
+    # Bir led ters davranirsa -- ornegin daemon kapaliyken yaniyorsa --
+    # sadece buradaki degeri ters cevir; kodda degisiklik gerekmez.
+    [leds]
+    active_led_active_high    = true
+    measuring_led_active_high = true
+
+    [daq]
+    gate_width_s = 1.003e-3  # Model 222 pulse with measured by oscilloscope
+    active_edge  = "falling" # inverting BC547: event -> GPIO LOW -> falling edge
+    pull_up      = true      # Button(pull_up=true); line is HIGH when no signal
+
+    [imu]
+    # Kalibrasyonda kullanilan referans egim olcerin katalog hassasiyeti.
+    # Kalibrasyon grafiginde yatay hata cubugu ve artik panelindeki bant
+    # bu sayidan cizilir: bandin icinde kalan bir artik, referans aletin
+    # zaten ayirt edemedigi bir farktir. Bosch egim olcer: +/- 0.2 derece.
+    reference_accuracy_deg = 0.2
+    # NOT: IMU with I2C interface -> SDA=BCM2, SCL=BCM3
+    i2c_addr            = 0x69   # BMI160 (SDO -> VDD). if GND connected, use 0x68
+    settle_tilt_std_deg = 0.05   # SETTLING threshold: tilt std must be below this value
+    settle_window_s     = 5.0    # ... and maintained for this duration
+    # Titresim bayragi: gyro buyuklugunun yuvarlanan RMS'i (derece/saniye)
+    # bu esiklerle karsilastirilir. Iki esik var ki RMS tam sinirda
+    # gezerken bayrak surekli yanip sonmesin -- yukariyi gecince
+    # "titriyor", asagiya inince "durgun".
+    vibration_on_dps    = 0.5    # bunun ustunde: titresim bayragi yanar
+    vibration_off_dps   = 0.3    # bunun altinda: bayrak soner
+    calibration_path = "/home/muon_telescope/muon_data/imu_calibration.json"
+
+    [display]
+    # EA DOGS164W-A, SSD1803A, I2C bus 1, SA0=GND -> 0x3C. 4 x 16 karakter.
+    # Daemon saniyede bir, sadece degisen satirlari yazar (bkz. panel.py).
+    i2c_bus  = 1
+    i2c_addr = 0x3C
+    contrast = 10        # 0..15, datasheet C3..C0
+
+    [buttons]
+    # J10: GPIO -> 1K -> buton -> GND, 100 nF filtre. Kartta pull-up yok,
+    # Pi'nin dahili pull-up'i: bosta HIGH, basili LOW.
+    pull_up = true
+    # Basili tutma sureleri (s). Kazara dokunma bir sey yapmasin.
+    start_hold_s    = 1.0    # bosta: otomatik isimli duz olcum baslat
+    stop_hold_s     = 1.0    # olcumu bitir (status: done)
+    reset_hold_s    = 5.0    # ne varsa iptal et, IDLE'a don (status: aborted)
+    shutdown_hold_s = 5.0    # olcumu kapat, daemon'i durdur, Pi'yi kapat
+    # Kapatma komutu. Daemon 'muon_telescope' kullanicisiyla calisir; bunun
+    # sifresiz calismasi icin /etc/sudoers.d/muon-daemon dosyasina:
+    #   muon_telescope ALL=(root) NOPASSWD: /sbin/poweroff
+    # Kural yoksa komut sessizce basarisiz olur, daemon yine de temiz durur.
+    shutdown_command = "sudo -n /sbin/poweroff"
+
+    [scan]
+    theta_start_deg = 0.0
+    theta_stop_deg  = 90.0       
+    theta_step_deg  = 10.0
+    acquisition_s   = 3600.0     # 60 min live acquisition per scan step
+
+    [temperature]
+    sensor_type = "DHT11"  # options: DHT11, DHT22, AM2302
+    threshold_low_C  = 0.0
+    threshold_high_C = 65.0
+
+    [hv]
+    # CAEN N1470, connected over USB (FTDI). The by-id path is stable
+    # across reboots and re-plugging, unlike /dev/ttyUSB0, which moves
+    # around when other USB serial devices are present.
+    port     = "/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_AB0LN7V1-if00-port0"
+    baudrate = 9600
+    board    = 0
+    timeout_s = 2.0
+    # Reading all four channels is 24 serial round-trips, about a second
+    # at 9600 baud, so this is polled far more slowly than the IMU.
+    poll_interval_s = 15.0
+
+    [influx]
+    # Live-monitoring layer only (Grafana) -- the txt files stay the
+    # scientific source of truth, so nothing here risks the measurement.
+    # env_interval_s: how often a point is built. The angle is the fast
+    #   moving quantity, so this paces the angle, not the DHT (which only
+    #   updates every 30 s anyway and just repeats in between).
+    # flush_interval_s: how long points may sit in RAM before one batched
+    #   HTTP write. This is the Grafana latency -- a point is invisible
+    #   until it is flushed. It is also what protects the SD card: at
+    #   10 s/30 s that is 2 writes a minute carrying 3 points each,
+    #   roughly 1 MB of raw points a day.
+    env_interval_s   = 10.0
+    flush_interval_s = 30.0
+    # Coincidence-rate bin. Short enough that a dashboard shows something
+    # within a minute of a run starting, and that a short run still
+    # leaves points behind; the scientific rate is rebuilt from the txt
+    # files offline, so nothing here has to be statistically final.
+    rate_bin_s       = 60.0
+
+    [paths]
+    data_dir = "/home/muon_telescope/muon_data"
+    db_path  = "/home/muon_telescope/muon_data/muon_telescope.db"
+
+ 
